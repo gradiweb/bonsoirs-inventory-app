@@ -8,7 +8,7 @@ const { OrderService } = require("../../services/orders/order.service");
 const orderServiceInstance = new OrderService();
 
 module.exports = class Order {
-    shipupOrder = async (req, res) => {
+    async shipupOrder(req, res) {
         if (!req.body) return res.sendStatus(200);
 
         const { id: orderId } = req.body;
@@ -33,9 +33,9 @@ module.exports = class Order {
             console.error(err);
             return res.sendStatus(500);
         }
-    };
+    }
 
-    handleNewOrder = async (req, res) => {
+    async handleNewOrder(req, res) {
         if (!req.body) return res.sendStatus(200);
 
         const { id: orderId } = req.body;
@@ -43,5 +43,5 @@ module.exports = class Order {
         console.log(`Received webhook for the creation of order #${orderId}`);
         console.log("Payload:");
         console.log(req.body);
-    };
+    }
 };
