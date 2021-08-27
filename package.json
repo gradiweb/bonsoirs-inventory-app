@@ -26,6 +26,7 @@
     "express-graphql": "^0.12.0",
     "graphql": "^15.5.1",
     "graphql-request": "^3.5.0",
+    "morgan": "^1.10.0",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
     "utf8": "^3.0.0"
