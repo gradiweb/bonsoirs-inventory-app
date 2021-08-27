@@ -8,26 +8,22 @@ const {
 
 
 
-module.exports = class CustomerService {
-    updateOrder = async (orderId) => {
-        try {
-            const urlOrder = `https://${key}:${pwd}@${domain}/admin/api/2021-04/orders/${orderId}.json`;
-            const emailTokenized = `c8585${orderId}@shipup.io`;
+class CustomerService {
+    
+}
 
-            let data = {
-                order: {
-                    id: orderId,
-                    note: emailTokenized,
-                },
-            };
+class OrderService {
+    constructor() {
+        this.baseUrl = `https://${key}:${pwd}@${domain}/admin/api/2021-04/orders`;
+    }
 
-            await axios.put(urlOrder, data);
+    updateOrder = async (orderId, data) => {
+        const urlOrder = `${this.baseUrl}/${orderId}.json`;
 
-            return emailTokenized;
+        const response = await axios.put(urlOrder, data);
 
-        } catch (err) {
-            console.error(err)
-            return err
-        }
+        return response;
     };
 }
+
+module.exports = {CustomerService, OrderService}
