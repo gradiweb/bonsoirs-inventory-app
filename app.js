@@ -24,7 +24,7 @@ app.listen(port, () => {
     console.log(`App listening on port ${port}`);
 });
 
-// Initialized ngrok if requested
+// Initialize ngrok if requested
 
 if (args.includes("ngrok")) {
     const ngrok = require("ngrok");
