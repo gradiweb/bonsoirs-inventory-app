@@ -1,9 +1,10 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
-const OrderController = require('../../../controllers/orders/order.controller');
+const OrderController = require("../../../controllers/orders/order.controller");
 
-const orderInstance = new OrderController();
+const orderController = new OrderController();
 
-router.post('/send-email', orderInstance.shipupOrder);
+router.post("/send-email", orderController.shipupOrder);
+router.post("/order-created", orderController.handleNewOrder);
 
 module.exports = router;
