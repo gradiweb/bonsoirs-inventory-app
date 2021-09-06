@@ -1,5 +1,5 @@
 const graphQLClient = require("../../graphql");
-const { getProduct } = require("../../graphql/products/queries/product.query");
+const { getProductById } = require("../../graphql/products/queries/product.query");
 
 require("dotenv").config();
 
@@ -16,7 +16,7 @@ class ProductService {
     }
 
     async getProduct(productId) {
-        const response = await graphQLClient.request(getProduct, {
+        const response = await graphQLClient.request(getProductById, {
             id: `gid://shopify/Product/${productId}`
         });
         console.log(response);
