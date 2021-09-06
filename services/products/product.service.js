@@ -19,7 +19,6 @@ class ProductService {
         const response = await graphQLClient.request(getProductById, {
             id: `gid://shopify/Product/${productId}`
         });
-        console.log(response);
         return response;
     }
 }
