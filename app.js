@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const args = process.argv.slice(2);
 
 const routes = require("./routes");
+const { logStack } = require("./utils/helpers");
 
 require("dotenv").config();
 
@@ -19,6 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(morgan(env == "development" ? "dev" : "tiny"));
 
 app.use("/api", routes);
+app.get("/", (req, res) => {
+    res.status(200).json(logStack(app._router.stack));
+});
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
