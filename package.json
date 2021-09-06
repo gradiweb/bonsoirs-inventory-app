@@ -23,6 +23,8 @@
     "dotenv": "^8.2.0",
     "eslint-config-airbnb": "^18.2.1",
     "express": "^4.17.1",
+    "graphql": "^15.5.3",
+    "graphql-request": "^3.5.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
