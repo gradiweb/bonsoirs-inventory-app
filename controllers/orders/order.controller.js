@@ -3,11 +3,13 @@ require("dotenv").config();
 
 // Requires (Service, Utils, graphql[query, mutations, etc...])
 const { OrderService } = require("../../services/orders/order.service");
+const { ProductService } = require("../../services/products/product.service");
 
 // Instances (All class instances)
 const orderServiceInstance = new OrderService();
+const productServiceInstance = new ProductService();
 
-module.exports = class Order {
+class Order {
     async shipupOrder(req, res) {
         if (!req.body) return res.sendStatus(200);
 
@@ -38,10 +40,29 @@ module.exports = class Order {
     async handleNewOrder(req, res) {
         if (!req.body) return res.sendStatus(200);
 
-        const { id: orderId } = req.body;
+        const { id: orderId, line_items } = req.body;
+
+        // console.log(JSON.stringify(req.body, 0, 2));
 
         console.log(`Received webhook for the creation of order #${orderId}`);
-        console.log("Payload:");
-        console.log(req.body);
+
+        // * 1. Extract line items that are bundle products
+        // ? Should this be a service-object's method?
+
+        for (const item of line_items) {
+            const { product_id } = item;
+            try {
+                const product = await productServiceInstance.getProduct(product_id);
+
+                console.log(JSON.stringify(product, 0, 2));
+            } catch (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+        }
+
+        return res.sendStatus(200);
     }
-};
+}
+
+module.exports = Order;
