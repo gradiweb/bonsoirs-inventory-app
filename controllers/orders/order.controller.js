@@ -52,7 +52,10 @@ class Order {
         for (const item of line_items) {
             const { product_id } = item;
             try {
-                const product = await productServiceInstance.getProduct(product_id);
+                const response = await productServiceInstance.getProduct(product_id);
+                const { product } = response;
+
+                if (!product) return res.sendStatus(404);
 
                 console.log(JSON.stringify(product, 0, 2));
             } catch (err) {
