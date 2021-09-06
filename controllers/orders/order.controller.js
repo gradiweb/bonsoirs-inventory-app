@@ -46,27 +46,15 @@ class Order {
 
         console.log(`Received webhook for the creation of order #${orderId}`);
 
-        // * 1. Extract line items that are bundle products
-        // TODO: move logic below into service method
+        // * 1. Get subproducts of bundles if any
 
-        for (const item of line_items) {
-            const { product_id } = item;
-            try {
-                const response = await productServiceInstance.getProduct(product_id);
-                const { product } = response;
+        const pendingMods = await productServiceInstance.getBundleSubProducts(line_items);
 
-                if (!product) return res.sendStatus(404);
+        if (!pendingMods) return res.sendStatus(500);
 
-                if (!product.tags.includes("package")) continue;
-
-                // If the product is a bundle, get inner products' handles from tags and go into special handler
-                const innerProducts = product.tags.filter(tag => tag.match(/^product-/));
-
-                if (innerProducts.length === 0) continue;
-            } catch (err) {
-                console.error(err);
-                return res.sendStatus(500);
-            }
+        if (pendingMods.length > 0) {
+            // TODO: continue here
+            // Found bundle sub-products
         }
 
         return res.sendStatus(200);
