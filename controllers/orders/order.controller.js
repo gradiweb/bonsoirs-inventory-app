@@ -47,7 +47,7 @@ class Order {
         console.log(`Received webhook for the creation of order #${orderId}`);
 
         // * 1. Extract line items that are bundle products
-        // ? Should this be a service-object's method?
+        // TODO: move logic below into service method
 
         for (const item of line_items) {
             const { product_id } = item;
@@ -57,7 +57,12 @@ class Order {
 
                 if (!product) return res.sendStatus(404);
 
-                console.log(JSON.stringify(product, 0, 2));
+                if (!product.tags.includes("package")) continue;
+
+                // If the product is a bundle, get inner products' handles from tags and go into special handler
+                const innerProducts = product.tags.filter(tag => tag.match(/^product-/));
+
+                if (innerProducts.length === 0) continue;
             } catch (err) {
                 console.error(err);
                 return res.sendStatus(500);
