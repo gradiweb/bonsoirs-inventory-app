@@ -24,4 +24,28 @@ const getProductByHandle = gql`
     }
 `;
 
-module.exports = { getProductById, getProductByHandle };
+const getVariantBySKU = gql`
+    query productVariants($sku: String!) {
+        productVariants(first: 5, query: $sku) {
+            edges {
+                node {
+                    id
+                    sku
+                    title
+                    inventoryItem {
+                        id
+                        inventoryLevels {
+                            edges {
+                                node {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+module.exports = { getProductById, getProductByHandle, getVariantBySKU };
