@@ -12,4 +12,16 @@ const getProductById = gql`
     }
 `;
 
-module.exports = { getProductById };
+const getProductByHandle = gql`
+    query productByHandle($handle: String!) {
+        productByHandle(handle: $id) {
+            id
+            handle
+            title
+            description
+            tags
+        }
+    }
+`;
+
+module.exports = { getProductById, getProductByHandle };
