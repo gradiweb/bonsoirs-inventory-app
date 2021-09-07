@@ -1,24 +1,32 @@
-const graphQLClient = require("../../graphql");
-const { getProductById } = require("../../graphql/products/queries/product.query");
-
 require("dotenv").config();
 
 const {
-    SHOPIFY_API_KEY: key,
-    SHOPIFY_API_PWD: pwd,
-    SHOPIFY_STORE_DOMAIN: domain,
-    SHOPIFY_GQL_ENDPOINT: gql_url
-} = process.env;
+    getProductById,
+    getProductByHandle
+} = require("../../graphql/products/queries/product.query");
+const graphQLClient = require("../../graphql");
+
+const { SHOPIFY_GQL_ENDPOINT: gql_url, SHOPIFY_GQL_BASEID: gql_baseId } = process.env;
 
 class ProductService {
     constructor() {
         this.baseUrl = gql_url;
+        this.baseGQLId = gql_baseId;
     }
 
     async getProduct(productId) {
         const response = await graphQLClient.request(getProductById, {
-            id: `gid://shopify/Product/${productId}`
+            id: `${this.baseGQLId}/Product/${productId}`
         });
+
+        return response;
+    }
+
+    async getProductByHandle(productHandle) {
+        const response = await graphQLClient.request(getProductByHandle, {
+            handle: productHandle
+        });
+
         return response;
     }
 
@@ -26,7 +34,7 @@ class ProductService {
         const data = [];
 
         for (const item of line_items) {
-            const { product_id, quantity } = item;
+            const { product_id, quantity, properties } = item;
             try {
                 const response = await this.getProduct(product_id);
                 const { product } = response;
@@ -40,7 +48,12 @@ class ProductService {
 
                 if (innerProducts.length === 0) continue;
 
-                innerProducts.forEach(el => data.push({ handle: el, quantity }));
+                data.push({
+                    bundleTitle: product.title,
+                    subProductHandles: innerProducts,
+                    quantity,
+                    properties
+                });
             } catch (err) {
                 console.error(err);
 
@@ -49,6 +62,12 @@ class ProductService {
         }
 
         return data;
+    }
+
+    async reduceInventory(productHandle, inventory) {
+        const productInfo = await this.getProductByHandle(productHandle);
+
+        console.log(productInfo);
     }
 }
 
