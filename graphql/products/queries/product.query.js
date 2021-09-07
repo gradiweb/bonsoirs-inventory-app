@@ -14,7 +14,7 @@ const getProductById = gql`
 
 const getProductByHandle = gql`
     query productByHandle($handle: String!) {
-        productByHandle(handle: $id) {
+        productByHandle(handle: $handle) {
             id
             handle
             title
