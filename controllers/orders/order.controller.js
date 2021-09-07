@@ -53,8 +53,15 @@ class Order {
         if (!pendingMods) return res.sendStatus(500);
 
         if (pendingMods.length > 0) {
-            // TODO: continue here
             // Found bundle sub-products
+            console.log("Found bundle sub-products!");
+            console.log(pendingMods);
+
+            for (mod of pendingMods) {
+                const response = await productServiceInstance.reduceInventory(...mod);
+
+                console.log(response);
+            }
         }
 
         return res.sendStatus(200);
