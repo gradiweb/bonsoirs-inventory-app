@@ -2,7 +2,8 @@ require("dotenv").config();
 
 const {
     getProductById,
-    getProductByHandle
+    getProductByHandle,
+    getVariantBySKU
 } = require("../../graphql/products/queries/product.query");
 const graphQLClient = require("../../graphql");
 
@@ -30,6 +31,12 @@ class ProductService {
         return response;
     }
 
+    async getVariantBySKU(sku) {
+        const response = await graphQLClient.request(getVariantBySKU, { sku: `sku:${sku}` });
+
+        return response;
+    }
+
     async getBundleSubProducts(line_items) {
         const data = [];
 
@@ -50,7 +57,7 @@ class ProductService {
 
                 data.push({
                     bundleTitle: product.title,
-                    subProductHandles: innerProducts,
+                    subproductHandles: innerProducts,
                     quantity,
                     properties
                 });
@@ -64,10 +71,28 @@ class ProductService {
         return data;
     }
 
-    async reduceInventory(productHandle, inventory) {
-        const productInfo = await this.getProductByHandle(productHandle);
+    async handleReduceInventories(item) {
+        // item includes line_item info: subproduct handles, properties and quantity
+        const { quantity } = item;
 
-        console.log(productInfo);
+        for (handle in item.subproductHandles) {
+            const productInfo = await this.getProductByHandle(handle);
+
+            const { title } = productInfo;
+
+            const prop = item.properties.find(el => el.name == `_SKU ${title}`);
+
+            if (!prop) {
+                console.log(`Could not find SKU for product ${title}`);
+                continue;
+            }
+
+            const { value: SKU } = prop;
+
+            const variantInfo = await this.getVariantBySKU(SKU);
+
+            console.log(variantInfo);
+        }
     }
 }
 
