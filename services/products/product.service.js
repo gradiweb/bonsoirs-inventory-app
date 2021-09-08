@@ -32,7 +32,9 @@ class ProductService {
     }
 
     async getVariantBySKU(sku) {
-        const response = await graphQLClient.request(getVariantBySKU, { sku: `sku:${sku}` });
+        const response = await graphQLClient.request(getVariantBySKU, {
+            sku: `sku:${sku}`
+        });
 
         return response;
     }
@@ -75,8 +77,19 @@ class ProductService {
         // item includes line_item info: subproduct handles, properties and quantity
         const { quantity } = item;
 
-        for (handle in item.subproductHandles) {
-            const productInfo = await this.getProductByHandle(handle);
+        for (const handle of item.subproductHandles) {
+            // Product info includes variant info (with inventory item and levels), see /graphql/products/queries/product.query.js
+            const response = await this.getProductByHandle(handle);
+            const { productByHandle: productInfo } = response;
+
+            if (!productInfo) {
+                console.log(`Could not find product with handle ${handle}`);
+                continue;
+            }
+
+            console.log("Product Info");
+            console.log("--------------------------------------");
+            console.log(productInfo);
 
             const { title } = productInfo;
 
@@ -89,9 +102,11 @@ class ProductService {
 
             const { value: SKU } = prop;
 
-            const variantInfo = await this.getVariantBySKU(SKU);
+            const variantInfo = productInfo.variants.edges.find(el => el.node.sku == SKU);
 
-            console.log(variantInfo);
+            console.log("Variant info found:");
+            console.log("----------------------------------");
+            console.log(JSON.stringify(variantInfo, 0, 2));
         }
     }
 }
