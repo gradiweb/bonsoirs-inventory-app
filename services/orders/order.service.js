@@ -1,16 +1,53 @@
-const axios = require("axios");
 require("dotenv").config();
-const { SHOPIFY_API_KEY: key, SHOPIFY_API_PWD: pwd, SHOPIFY_STORE_DOMAIN: domain } = process.env;
+
+const {
+    beginOrderEdit,
+    addVariantToOrder,
+    addFullDiscountToVariant,
+    endOrderEdit
+} = require("../../graphql/orders/mutations/order.mutation");
+
+const graphQLClient = require("../../graphql");
+
+const { SHOPIFY_GQL_ENDPOINT: gql_url, SHOPIFY_GQL_BASEID: gql_baseId } = process.env;
 
 class OrderService {
     constructor() {
-        this.baseUrl = `https://${key}:${pwd}@${domain}/admin/api/2021-04/orders`;
+        this.baseUrl = gql_url;
+        this.baseGQLId = gql_baseId;
     }
 
-    async updateOrder(orderId, data) {
-        const urlOrder = `${this.baseUrl}/${orderId}.json`;
+    async beginOrderEdit(orderId) {
+        const response = await graphQLClient.request(beginOrderEdit, {
+            id: `${this.baseGQLId}/Order/${orderId}`
+        });
 
-        const response = await axios.put(urlOrder, data);
+        return response;
+    }
+
+    async addVariantOrderEdit(orderEditId, variantId, quantity) {
+        const response = await graphQLClient.request(addVariantToOrder, {
+            orderEditId: `${this.gql_baseId}/CalculatedOrder/${orderEditId}`,
+            variantId: `${this.gql_baseId}/ProductVariant/${variantId}`,
+            quantity
+        });
+
+        return response;
+    }
+
+    async addFullDiscountOrderEditLineItem(orderEditId, lineItemId) {
+        const response = await graphQLClient.request(addFullDiscountToVariant, {
+            orderEditId: `${this.gql_baseId}/CalculatedOrder/${orderEditId}`,
+            lineItemId: `${this.gql_baseId}/CalculatedLineItem/${lineItemId}`
+        });
+
+        return response;
+    }
+
+    async endOrderEdit(orderEditId) {
+        const response = await graphQLClient.request(endOrderEdit, {
+            orderEditId: `${this.gql_baseId}/CalculatedOrder/${orderEditId}`
+        });
 
         return response;
     }
