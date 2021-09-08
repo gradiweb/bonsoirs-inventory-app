@@ -26,9 +26,13 @@ class OrderService {
     }
 
     async addVariantOrderEdit(orderEditId, variantId, quantity) {
+        if (!orderEditId.includes("gid://"))
+            orderEditId = `${this.baseGQLId}/CalculatedOrder/${orderEditId}`;
+        if (!String(variantId).includes("gid://"))
+            variantId = `${this.baseGQLId}/ProductVariant/${variantId}`;
         const response = await graphQLClient.request(addVariantToOrder, {
-            orderEditId: `${this.gql_baseId}/CalculatedOrder/${orderEditId}`,
-            variantId: `${this.gql_baseId}/ProductVariant/${variantId}`,
+            orderEditId,
+            variantId,
             quantity
         });
 
@@ -36,17 +40,25 @@ class OrderService {
     }
 
     async addFullDiscountOrderEditLineItem(orderEditId, lineItemId) {
+        if (!orderEditId.includes("gid://"))
+            orderEditId = `${this.baseGQLId}/CalculatedOrder/${orderEditId}`;
+        if (!lineItemId.includes("gid://"))
+            lineItemId = `${this.baseGQLId}/CalculatedLineItem/${lineItemId}`;
+
         const response = await graphQLClient.request(addFullDiscountToVariant, {
-            orderEditId: `${this.gql_baseId}/CalculatedOrder/${orderEditId}`,
-            lineItemId: `${this.gql_baseId}/CalculatedLineItem/${lineItemId}`
+            orderEditId,
+            lineItemId
         });
 
         return response;
     }
 
     async endOrderEdit(orderEditId) {
+        if (!orderEditId.includes("gid://"))
+            orderEditId = `${this.baseGQLId}/CalculatedOrder/${orderEditId}`;
+
         const response = await graphQLClient.request(endOrderEdit, {
-            orderEditId: `${this.gql_baseId}/CalculatedOrder/${orderEditId}`
+            orderEditId
         });
 
         return response;
