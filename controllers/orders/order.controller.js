@@ -59,7 +59,10 @@ class Order {
 
             for (const mod of pendingMods) {
                 try {
-                    const response = await productServiceInstance.handleReduceInventories(mod);
+                    const response = await productServiceInstance.handleReduceInventories(
+                        mod,
+                        orderId
+                    );
 
                     console.log(response);
                 } catch (err) {
