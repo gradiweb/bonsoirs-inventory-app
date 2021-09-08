@@ -15,7 +15,7 @@ const beginOrderEdit = gql`
 `;
 
 const addVariantToOrder = gql`
-    mutation addVariantToOrder($orderEditId: ID!, variantId: ID!, quantity: Int!) {
+    mutation addVariantToOrder($orderEditId: ID!, $variantId: ID!, $quantity: Int!) {
         orderEditAddVariant(id: $orderEditId, variantId: $variantId, quantity: $quantity) {
             calculatedOrder {
                 id
@@ -23,6 +23,7 @@ const addVariantToOrder = gql`
                     edges {
                         node {
                             id
+                            title
                             quantity
                         }
                     }
@@ -33,14 +34,19 @@ const addVariantToOrder = gql`
 `;
 
 const addFullDiscountToVariant = gql`
-    mutation addDiscount($orderEditId: ID!, lineItemId: ID!) {
-        orderEditAddLineItemDiscount(id: $orderEditId, lineItemId: $lineItemId, discount: {percentValue: 100, description: "Bundle subproduct"}) {
+    mutation addDiscount($orderEditId: ID!, $lineItemId: ID!) {
+        orderEditAddLineItemDiscount(
+            id: $orderEditId
+            lineItemId: $lineItemId
+            discount: { percentValue: 100, description: "Bundle subproduct" }
+        ) {
             calculatedOrder {
                 id
                 addedLineItems(first: 5) {
                     edges {
                         node {
                             id
+                            title
                             quantity
                         }
                     }
@@ -55,8 +61,12 @@ const addFullDiscountToVariant = gql`
 `;
 
 const endOrderEdit = gql`
-    mutation commitEdit(orderEditId: ID!) {
-        orderEditCommit(id: $orderEditId, notifyCustomer: false, staffNote: "Edited by backend inventory app") {
+    mutation commitEdit($orderEditId: ID!) {
+        orderEditCommit(
+            id: $orderEditId
+            notifyCustomer: false
+            staffNote: "Edited by backend inventory app"
+        ) {
             order {
                 id
             }
