@@ -20,6 +20,28 @@ const getProductByHandle = gql`
             title
             description
             tags
+            variants(first: 50) {
+                edges {
+                    node {
+                        id
+                        title
+                        sku
+                        inventoryItem {
+                            id
+                            inventoryLevels(first: 5) {
+                                edges {
+                                    node {
+                                        id
+                                        location {
+                                            id
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 `;
