@@ -40,9 +40,10 @@ class Order {
     async handleNewOrder(req, res) {
         if (!req.body) return res.sendStatus(200);
 
-        const { id: orderId, line_items } = req.body;
+        const { id: orderId, line_items, email } = req.body;
 
-        // console.log(JSON.stringify(req.body, 0, 2));
+        // ! Only moves forward if customer email address has a gradiweb.com domain (remove before going live!!!!)
+        if (!email.includes("gradiweb.com")) return res.sendStatus(200);
 
         console.log(`Received webhook for the creation of order #${orderId}`);
 
