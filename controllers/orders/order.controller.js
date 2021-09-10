@@ -43,6 +43,7 @@ class Order {
         const { id: orderId, line_items, email } = req.body;
 
         // ! Only moves forward if customer email address has a gradiweb.com domain (remove before going live!!!!)
+
         if (!email.includes("gradiweb.com")) return res.sendStatus(200);
 
         console.log(`Received webhook for the creation of order ID#${orderId}`);
