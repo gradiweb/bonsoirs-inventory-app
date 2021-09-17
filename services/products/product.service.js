@@ -3,6 +3,7 @@ require("dotenv").config();
 const {
     getProductById,
     getProductByHandle,
+    getProductsByTag,
     getVariantBySKU
 } = require("../../graphql/products/queries/product.query");
 
@@ -143,6 +144,14 @@ class ProductService {
         console.log("Commit changes made to order");
         response = await orderServiceInstance.endOrderEdit(order.id);
         console.log(response);
+    }
+
+    async fetchProductsByTag(tag) {
+        const response = graphQLClient.request(getProductsByTag, {
+            query: `tag:${tag}`
+        });
+
+        return response;
     }
 }
 
